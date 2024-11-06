@@ -1,0 +1,49 @@
+﻿
+
+@using Radzen
+@using Radzen.Blazor
+@using TransactionFrontend.Models
+@using TransactionFrontend.Services
+
+@page "/new-transaction"
+@inject ITransactionService TransactionService
+@inject NotificationService NotificationService
+
+<h3>New Transaction</h3>
+
+<RadzenTemplateForm Data="@transaction" Submit="EventCallback.Factory.Create<CreateTransactionDto>(this, HandleValidSubmit)">
+    <RadzenFieldset Text="Transaction Details">
+        <ValidationSummary /> 
+        <RadzenNumeric @bind-Value="transaction.Amount" Name="Amount" Min="0" Step="0.01" Style="width: 100%;" Placeholder="Amount" />
+        <RadzenDropDown @bind-Value="transaction.Currency" Data="currencies" Name="Currency" Style="width: 100%;" Placeholder="Select Currency" />
+        <RadzenDropDown @bind-Value="transaction.TransactionType" Data="transactionTypes" Name="TransactionType" Style="width: 100%;" Placeholder="Select Type" />
+        <RadzenDropDown @bind-Value="transaction.Status" Data="statuses" Name="Status" Style="width: 100%;" Placeholder="Select Status" />
+        <RadzenButton Text="Submit" ButtonType="ButtonType.Submit" Style="margin-top: 20px;" />
+    </RadzenFieldset>
+</RadzenTemplateForm>
+
+
+@code {
+    private CreateTransactionDto transaction = new CreateTransactionDto();
+
+    private IEnumerable<string> currencies = Enum.GetNames(typeof(Currency));
+    private IEnumerable<string> transactionTypes = Enum.GetNames(typeof(TransactionType));
+    private IEnumerable<string> statuses = Enum.GetNames(typeof(Status));
+
+    private async Task HandleValidSubmit()
+    {
+        try
+        {
+            await TransactionService.CreateTransactionAsync(transaction);
+            NotificationService.Notify(NotificationSeverity.Success, "Success", "Transaction created successfully");
+            transaction = new CreateTransactionDto(); // Reset form
+            StateHasChanged();
+        }
+        catch (Exception ex)
+        {
+            NotificationService.Notify(NotificationSeverity.Error, "Error", $"An error occurred: {ex.Message}");
+        }
+    }
+}
+
+

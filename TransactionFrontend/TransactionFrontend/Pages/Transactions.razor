@@ -1,0 +1,36 @@
+﻿@using Radzen
+@using Radzen.Blazor
+@using TransactionFrontend.Models
+@using TransactionFrontend.Services
+
+@page "/transactions"
+@inject ITransactionService TransactionService
+
+<h3>All Transactions</h3>
+
+@if (transactions == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <RadzenDataGrid Data="@transactions" TItem="TransactionDto" ColumnWidth="200px" AllowFiltering="true" AllowPaging="true" PageSize="10">
+        <Columns>
+            <RadzenDataGridColumn TItem="TransactionDto" Property="Id" Title="ID" />
+            <RadzenDataGridColumn TItem="TransactionDto" Property="Amount" Title="Amount" />
+            <RadzenDataGridColumn TItem="TransactionDto" Property="Currency" Title="Currency" />
+            <RadzenDataGridColumn TItem="TransactionDto" Property="TransactionType" Title="Type" />
+            <RadzenDataGridColumn TItem="TransactionDto" Property="Status" Title="Status" />
+            <RadzenDataGridColumn TItem="TransactionDto" Property="Timestamp" Title="Timestamp" FormatString="{0:yyyy-MM-dd HH:mm:ss}" />
+        </Columns>
+    </RadzenDataGrid>
+}
+
+@code {
+    private List<TransactionDto> transactions;
+
+    protected override async Task OnInitializedAsync()
+    {
+        transactions = await TransactionService.GetAllTransactionsAsync();
+    }
+}

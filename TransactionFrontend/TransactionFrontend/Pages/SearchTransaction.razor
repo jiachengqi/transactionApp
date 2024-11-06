@@ -1,0 +1,57 @@
+﻿
+@using Radzen
+@using Radzen.Blazor
+@using TransactionFrontend.Models
+@using TransactionFrontend.Services
+@page "/search-transaction"
+@inject ITransactionService TransactionService
+@inject NotificationService NotificationService
+
+<h3>Search Transaction by ID</h3>
+
+<RadzenTemplateForm Data="@searchModel" Submit="EventCallback.Factory.Create<SearchModel>(this, HandleSearch)">
+    <RadzenFieldset Text="Search">
+        <RadzenNumeric @bind-Value="searchModel.Id" Name="Id" Min="1" Style="width: 100%;" Placeholder="Transaction ID" />
+        <RadzenButton Text="Search" ButtonType="ButtonType.Submit" Style="margin-top: 20px;" />
+    </RadzenFieldset>
+</RadzenTemplateForm>
+
+@if (transaction != null)
+{
+    <RadzenCard>
+        <RadzenHeading Size="H4">Transaction Details</RadzenHeading>
+        <p><strong>ID:</strong> @transaction.Id</p>
+        <p><strong>Amount:</strong> @transaction.Amount</p>
+        <p><strong>Currency:</strong> @transaction.Currency</p>
+        <p><strong>Type:</strong> @transaction.TransactionType</p>
+        <p><strong>Status:</strong> @transaction.Status</p>
+        <p><strong>Timestamp:</strong> @transaction.Timestamp.ToString("yyyy-MM-dd HH:mm:ss")</p>
+    </RadzenCard>
+}
+else if (searchPerformed)
+{
+    <RadzenAlert Text="Transaction not found." Severity="Radzen.AlertSeverity.Warning" />
+}
+
+@code {
+    private class SearchModel
+    {
+        public long Id { get; set; }
+    }
+
+    private SearchModel searchModel = new();
+    private TransactionDto transaction;
+    private bool searchPerformed = false;
+
+    private async Task HandleSearch()
+    {
+        transaction = await TransactionService.GetTransactionByIdAsync(searchModel.Id);
+        searchPerformed = true;
+
+        if (transaction == null)
+        {
+            NotificationService.Notify(NotificationSeverity.Warning, "Not Found", "Transaction not found.");
+        }
+        StateHasChanged();
+    }
+}
