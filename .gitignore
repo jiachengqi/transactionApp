@@ -117,8 +117,6 @@ Thumbs.db
 *.ipr
 
 # Visual Studio
-*.csproj
-*.sln
 .vscode/
 *.vs/
 bin/
