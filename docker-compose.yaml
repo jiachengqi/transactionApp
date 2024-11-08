@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./Transaction
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    networks:
+      - app-network
+    environment:
+      - JAVA_OPTS=-Xmx512m
+
+  frontend:
+    build:
+      context: ./TransactionFrontend
+      dockerfile: Dockerfile
+    ports:
+      - "5100:80"
+    depends_on:
+      - backend
+    networks:
+      - app-network
+
+networks:
+  app-network:

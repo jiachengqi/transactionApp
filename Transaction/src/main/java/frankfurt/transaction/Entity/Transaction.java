@@ -1,17 +1,26 @@
 package frankfurt.transaction.Entity;
 
 import jakarta.persistence.*;
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
+@Data
 @Entity
+@EntityListeners(AuditingEntityListener.class)
 public class Transaction {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private BigDecimal amount;
+    @Setter
+    @Getter
     private LocalDateTime timestamp;
 
     @Enumerated(EnumType.STRING)
@@ -48,56 +57,6 @@ public class Transaction {
         this.status = status;
         this.currency = currency;
     }
-
-    // Getters and setters
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public BigDecimal getAmount() {
-        return amount;
-    }
-
-    public void setAmount(BigDecimal amount) {
-        this.amount = amount;
-    }
-
-    public LocalDateTime getTimestamp() {
-        return timestamp;
-    }
-
-    public void setTimestamp(LocalDateTime timestamp) {
-        this.timestamp = timestamp;
-    }
-
-    public TransactionType getTransactionType() {
-        return transactionType;
-    }
-
-    public void setTransactionType(TransactionType transactionType) {
-        this.transactionType = transactionType;
-    }
-
-    public Status getStatus() {
-        return status;
-    }
-
-    public void setStatus(Status status) {
-        this.status = status;
-    }
-
-    public Currency getCurrency() {
-        return currency;
-    }
-
-    public void setCurrency(Currency currency) {
-        this.currency = currency;
-    }
-
     // Equals and hashCode methods
     @Override
     public boolean equals(Object o) {

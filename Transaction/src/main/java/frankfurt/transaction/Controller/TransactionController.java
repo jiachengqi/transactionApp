@@ -1,45 +1,69 @@
 package frankfurt.transaction.Controller;
 
-import frankfurt.transaction.Entity.Transaction;
-import frankfurt.transaction.Service.TransactionService;
+import frankfurt.transaction.Entity.TransactionDTO;
+import frankfurt.transaction.Service.ITransactionService;
+import frankfurt.transaction.Util.TransactionNotFoundException;
 import jakarta.validation.Valid;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/transactions")
-@CrossOrigin(origins = "*") // Allow all origins for CORS
+@CrossOrigin(origins = "*")
 public class TransactionController {
 
-    private final TransactionService transactionService;
+    private static final Logger logger = LoggerFactory.getLogger(TransactionController.class);
+    private final ITransactionService transactionService;
 
-    public TransactionController(TransactionService transactionService) {
+    /**
+     * Constructor for TransactionController
+     *
+     * @param transactionService the transaction service
+     */
+    public TransactionController(ITransactionService transactionService) {
         this.transactionService = transactionService;
     }
 
-    // Save New Transaction
+    /**
+     * Creates a new transaction.
+     *
+     * @param transactionDTO the transaction DTO
+     * @return the saved transaction DTO
+     */
     @PostMapping
-    public ResponseEntity<Transaction> createTransaction(@Valid @RequestBody Transaction transaction) {
-        Transaction savedTransaction = transactionService.saveTransaction(transaction);
-        return ResponseEntity.ok(savedTransaction);
+    public ResponseEntity<TransactionDTO> createTransaction(@Valid @RequestBody TransactionDTO transactionDTO) {
+        TransactionDTO savedTransaction = transactionService.saveTransaction(transactionDTO);
+        logger.info("new transaction created: {}", savedTransaction);
+        return ResponseEntity.status(HttpStatus.CREATED).body(savedTransaction);
     }
 
-    // List All Transactions
+    /**
+     * Retrieves all transactions.
+     *
+     * @return the list of transaction DTOs
+     */
     @GetMapping
-    public ResponseEntity<List<Transaction>> getAllTransactions() {
-        List<Transaction> transactions = transactionService.getAllTransactions();
+    public ResponseEntity<List<TransactionDTO>> getAllTransactions() {
+        List<TransactionDTO> transactions = transactionService.getAllTransactions();
         return ResponseEntity.ok(transactions);
     }
 
-    // Get Transaction by ID
+    /**
+     * Retrieves a transaction by its ID.
+     *
+     * @param id the transaction ID
+     * @return the transaction DTO
+     */
     @GetMapping("/{id}")
-    public ResponseEntity<Transaction> getTransactionById(@PathVariable Long id) {
-        return transactionService.getTransactionById(id)
+    public ResponseEntity<TransactionDTO> getTransactionById(@PathVariable Long id) {
+        Optional<TransactionDTO> transactionDTO = transactionService.getTransactionById(id);
+        return transactionDTO
                 .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+                .orElseThrow(() -> new TransactionNotFoundException("transaction not found with id: " + id));
     }
 }

@@ -1,32 +1,63 @@
 package frankfurt.transaction.Service;
 
 import frankfurt.transaction.Entity.Transaction;
+import frankfurt.transaction.Entity.TransactionDTO;
+import frankfurt.transaction.Entity.TransactionMapper;
 import frankfurt.transaction.Repo.TransactionRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
-public class TransactionService {
+public class TransactionService implements ITransactionService {
 
     private final TransactionRepository transactionRepository;
+    private final TransactionMapper transactionMapper;
 
-    public TransactionService(TransactionRepository transactionRepository) {
+    /**
+     * Constructor for TransactionService.
+     *
+     * @param transactionRepository the transaction repository
+     * @param transactionMapper     the transaction mapper
+     */
+    public TransactionService(TransactionRepository transactionRepository, TransactionMapper transactionMapper) {
         this.transactionRepository = transactionRepository;
+        this.transactionMapper = transactionMapper;
     }
 
-    public Transaction saveTransaction(Transaction transaction) {
-        transaction.setTimestamp(transaction.getTimestamp() != null ? transaction.getTimestamp() : LocalDateTime.now());
-        return transactionRepository.save(transaction);
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @Transactional
+    public TransactionDTO saveTransaction(TransactionDTO transactionDTO) {
+        Transaction transaction = transactionMapper.toEntity(transactionDTO);
+        transaction.setTimestamp(LocalDateTime.now());
+        Transaction savedTransaction = transactionRepository.save(transaction);
+        return transactionMapper.toDto(savedTransaction);
     }
 
-    public List<Transaction> getAllTransactions() {
-        return transactionRepository.findAll();
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<TransactionDTO> getAllTransactions() {
+        return transactionRepository.findAll()
+                .stream()
+                .map(transactionMapper::toDto)
+                .collect(Collectors.toList());
     }
 
-    public Optional<Transaction> getTransactionById(Long id) {
-        return transactionRepository.findById(id);
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Optional<TransactionDTO> getTransactionById(Long id) {
+        return transactionRepository.findById(id)
+                .map(transactionMapper::toDto);
     }
 }
