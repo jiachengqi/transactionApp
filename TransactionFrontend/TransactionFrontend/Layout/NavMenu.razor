@@ -1,7 +1,4 @@
-﻿@using Radzen
-@using Radzen.Blazor
-
-<div class="top-row ps-3 navbar navbar-dark">
+﻿<div class="top-row ps-3 navbar navbar-dark">
     <div class="container-fluid">
         <a class="navbar-brand" href="">TransactionFrontend</a>
         <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
@@ -13,8 +10,7 @@
 <div class="@NavMenuCssClass nav-scrollable" @onclick="ToggleNavMenu">
     <nav>
         <RadzenPanelMenu>
-            <RadzenPanelMenuItem Text="Home" Path="/" Icon="home" />
-            <RadzenPanelMenuItem Text="Transactions" Path="/transactions" Icon="list" />
+            <RadzenPanelMenuItem Text="Transactions" Path="/" Icon="list" />
             <RadzenPanelMenuItem Text="New Transaction" Path="/new-transaction" Icon="add_circle_outline" />
             <RadzenPanelMenuItem Text="Search Transaction" Path="/search-transaction" Icon="search" />
         </RadzenPanelMenu>

@@ -17,6 +17,4 @@ builder.Services.AddScoped<ContextMenuService>();
 
 builder.Services.AddScoped<ITransactionService, TransactionService>();
 
-
 await builder.Build().RunAsync();
-

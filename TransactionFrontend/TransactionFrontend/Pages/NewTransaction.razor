@@ -1,7 +1,4 @@
-﻿
-
-@using Radzen
-@using Radzen.Blazor
+﻿@using Radzen
 @using TransactionFrontend.Models
 @using TransactionFrontend.Services
 
@@ -35,13 +32,19 @@
         try
         {
             await TransactionService.CreateTransactionAsync(transaction);
-            NotificationService.Notify(NotificationSeverity.Success, "Success", "Transaction created successfully");
-            transaction = new CreateTransactionDto(); // Reset form
+            NotificationService.Notify(
+                NotificationSeverity.Success,
+                "Transaction Created",
+                $"Transaction created successfully! Amount: {transaction.Amount}, " +
+                $"Type: {transaction.TransactionType}, Status: {transaction.Status}, Currency: {transaction.Currency}",
+                duration: 5000
+            );
+            transaction = new CreateTransactionDto();
             StateHasChanged();
         }
         catch (Exception ex)
         {
-            NotificationService.Notify(NotificationSeverity.Error, "Error", $"An error occurred: {ex.Message}");
+            NotificationService.Notify(NotificationSeverity.Error, "Error", $"error occurred: {ex.Message}");
         }
     }
 }

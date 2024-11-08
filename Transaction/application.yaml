@@ -21,5 +21,5 @@ spring:
 
   web:
     cors:
-      allowed-origin-patterns: http://localhost:5000
+      allowed-origin-patterns: http://localhost:5100
       allowed-methods: GET,POST,PUT,DELETE,OPTIONS

@@ -64,6 +64,6 @@ public class TransactionController {
         Optional<TransactionDTO> transactionDTO = transactionService.getTransactionById(id);
         return transactionDTO
                 .map(ResponseEntity::ok)
-                .orElseThrow(() -> new TransactionNotFoundException("transaction not found with id: " + id));
+                .orElseThrow(() -> new TransactionNotFoundException("transaction not found id: " + id));
     }
 }

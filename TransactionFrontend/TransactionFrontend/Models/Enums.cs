@@ -1,5 +1,4 @@
-﻿using System;
-namespace TransactionFrontend.Models
+﻿namespace TransactionFrontend.Models
 {
     public enum TransactionType
     {

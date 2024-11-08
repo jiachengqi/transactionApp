@@ -1,9 +1,7 @@
 package frankfurt.transaction.Entity;
 
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.math.BigDecimal;
@@ -13,24 +11,46 @@ import java.util.Objects;
 @Data
 @Entity
 @EntityListeners(AuditingEntityListener.class)
+@AllArgsConstructor
+@NoArgsConstructor
 public class Transaction {
 
+    @Setter
+    @Getter
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+
+    @Setter
+    @Getter
     private BigDecimal amount;
+
     @Setter
     @Getter
     private LocalDateTime timestamp;
 
+    @Setter
+    @Getter
     @Enumerated(EnumType.STRING)
     private TransactionType transactionType;
 
+    @Setter
+    @Getter
     @Enumerated(EnumType.STRING)
     private Status status;
 
+    @Setter
+    @Getter
     @Enumerated(EnumType.STRING)
     private Currency currency;
+
+    public Transaction(BigDecimal amount, LocalDateTime timestamp, TransactionType transactionType, Status status, Currency currency) {
+        this.amount = amount;
+        this.timestamp = timestamp;
+        this.transactionType = transactionType;
+        this.status = status;
+        this.currency = currency;
+    }
 
     // Enums for transaction type, status, and currency
     public enum TransactionType {
@@ -45,18 +65,6 @@ public class Transaction {
         EUR, GBP, INR
     }
 
-    // No-args constructor
-    public Transaction() {
-    }
-
-    // All-args constructor
-    public Transaction(BigDecimal amount, LocalDateTime timestamp, TransactionType transactionType, Status status, Currency currency) {
-        this.amount = amount;
-        this.timestamp = timestamp;
-        this.transactionType = transactionType;
-        this.status = status;
-        this.currency = currency;
-    }
     // Equals and hashCode methods
     @Override
     public boolean equals(Object o) {

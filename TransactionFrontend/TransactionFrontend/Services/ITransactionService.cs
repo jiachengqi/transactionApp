@@ -1,5 +1,4 @@
-﻿using System;
-using TransactionFrontend.Models;
+﻿using TransactionFrontend.Models;
 
 namespace TransactionFrontend.Services
 {
@@ -10,4 +9,3 @@ namespace TransactionFrontend.Services
         Task<TransactionDto> CreateTransactionAsync(CreateTransactionDto transaction);
     }
 }
-

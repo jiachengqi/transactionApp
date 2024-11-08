@@ -22,7 +22,7 @@ public class TransactionService implements ITransactionService {
      * Constructor for TransactionService.
      *
      * @param transactionRepository the transaction repository
-     * @param transactionMapper     the transaction mapper
+     * @param transactionMapper     the transaction object mapper
      */
     public TransactionService(TransactionRepository transactionRepository, TransactionMapper transactionMapper) {
         this.transactionRepository = transactionRepository;

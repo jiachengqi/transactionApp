@@ -1,6 +1,4 @@
-﻿
-@using Radzen
-@using Radzen.Blazor
+﻿@using Radzen
 @using TransactionFrontend.Models
 @using TransactionFrontend.Services
 @page "/search-transaction"
@@ -45,13 +43,22 @@ else if (searchPerformed)
 
     private async Task HandleSearch()
     {
-        transaction = await TransactionService.GetTransactionByIdAsync(searchModel.Id);
-        searchPerformed = true;
-
-        if (transaction == null)
+        try
         {
-            NotificationService.Notify(NotificationSeverity.Warning, "Not Found", "Transaction not found.");
+            transaction = null;
+            searchPerformed = false;
+
+            transaction = await TransactionService.GetTransactionByIdAsync(searchModel.Id);
+            searchPerformed = true;
+
+            if (transaction == null)
+            {
+                NotificationService.Notify(NotificationSeverity.Warning, "Not Found", "Transaction not found.");
+            }
         }
-        StateHasChanged();
+        catch (Exception ex)
+        {
+            NotificationService.Notify(NotificationSeverity.Error, "Error", $"An error occurred: {ex.Message}");
+        }
     }
 }

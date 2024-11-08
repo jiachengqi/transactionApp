@@ -1,19 +1,18 @@
-﻿@using Radzen
-@using Radzen.Blazor
-@using TransactionFrontend.Models
+﻿@using TransactionFrontend.Models
 @using TransactionFrontend.Services
 
-@page "/transactions"
+@page "/"
 @inject ITransactionService TransactionService
+@inject NotificationService NotificationService
 
 <h3>All Transactions</h3>
 
-@if (transactions == null)
+@if (isLoading)
 {
-    <p><em>Loading...</em></p>
-}
-else
-{
+    <RadzenProgressBar Mode="Radzen.ProgressBarMode.Indeterminate" />
+    }
+else if (transactions != null)
+    {
     <RadzenDataGrid Data="@transactions" TItem="TransactionDto" ColumnWidth="200px" AllowFiltering="true" AllowPaging="true" PageSize="10">
         <Columns>
             <RadzenDataGridColumn TItem="TransactionDto" Property="Id" Title="ID" />
@@ -28,9 +27,21 @@ else
 
 @code {
     private List<TransactionDto> transactions;
+    private bool isLoading = true;
 
     protected override async Task OnInitializedAsync()
     {
-        transactions = await TransactionService.GetAllTransactionsAsync();
+        try
+        {
+            transactions = await TransactionService.GetAllTransactionsAsync();
+        }
+        catch (Exception ex)
+        {
+            NotificationService.Notify(NotificationSeverity.Error, "Error", $"eailed to load transactions: {ex.Message}");
+        }
+        finally
+        {
+            isLoading = false;
+        }
     }
 }
